@@ -443,7 +443,7 @@ export default function Portfolio() {
       link: "https://youtu.be/UemwIzdntDQ?si=Eakld1wluuF7Y7DN",
     },
     {
-      title: "কিয়ামের দিন",
+      title: "সিয়ামের দিন",
       artist: "ইকবাল হুসাইন জীবন",
       link: "https://youtu.be/Pl1KeFWaTCA?si=ddVmT_XeTteuBxne",
     },
@@ -496,9 +496,7 @@ export default function Portfolio() {
                 <span>•</span>
                 <span>Poet</span>
                 <span>•</span>
-                <span>Songwriter</span>
-                <span>•</span>
-                <span>Nasheed Artist</span>
+                <span>Lyricist</span>
               </div>
               <p className="text-lg sm:text-xl lg:text-2xl text-slate-700 font-medium italic max-w-2xl">
                 "I write to awaken — for truth, for faith, for justice."
@@ -662,13 +660,11 @@ export default function Portfolio() {
           <div className="text-center space-y-4">
             <Button
               onClick={() => setShowAllBooks(!showAllBooks)}
-              size='lg'
-                                className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
-
+              size="lg"
+              className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
             >
               {showAllBooks ? (
                 <>
-                  
                   <ChevronUp className="mr-2 h-4 w-4" />
                   Show Less
                 </>
@@ -679,7 +675,6 @@ export default function Portfolio() {
                 </>
               )}
             </Button>
-
           </div>
         </div>
       </section>
@@ -740,7 +735,7 @@ export default function Portfolio() {
                       link: "https://youtu.be/UemwIzdntDQ?si=Eakld1wluuF7Y7DN",
                     },
                     {
-                      title: "কিয়ামের দিন",
+                      title: "সিয়ামের দিন",
                       link: "https://youtu.be/Pl1KeFWaTCA?si=ddVmT_XeTteuBxne",
                     },
                   ].map((song, index) => (
@@ -984,8 +979,8 @@ export default function Portfolio() {
                 <div className="text-center">
                   <Button
                     onClick={() => setShowAllNasheed(true)}
-                     size='lg'
-                                className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
+                    size="lg"
+                    className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
                   >
                     <ChevronDown className="mr-2 h-4 w-4" />
                     See More Songs ({allNasheedSongs.length - 9} more)
