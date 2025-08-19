@@ -144,7 +144,8 @@ export default function Portfolio() {
       cover: "/images/book-priyotoma.jpg",
       gradient: "from-pink-400 to-pink-600",
       shadow: "shadow-pink-200",
-      orderLink: "#",
+      orderLink:
+        "https://www.rokomari.com/book/278794/priyotoma-tomake-jevabe-chai",
     },
     {
       title: "চেহারায় মানুষ",
@@ -152,7 +153,7 @@ export default function Portfolio() {
       cover: "/images/book-cheharay-manush.jpg",
       gradient: "from-yellow-400 to-orange-500",
       shadow: "shadow-yellow-200",
-      orderLink: "#",
+      orderLink: "https://www.rokomari.com/book/212307/ceharay-manus",
     },
     {
       title: "হৃদয়ের অগ্নুৎপাত",
@@ -160,7 +161,7 @@ export default function Portfolio() {
       cover: "/images/book-hridoyer-ognutpat.jpg",
       gradient: "from-red-500 to-red-700",
       shadow: "shadow-red-200",
-      orderLink: "#",
+      orderLink: "https://www.rokomari.com/book/225683/hridoyer-agnutpat",
     },
     {
       title: "বোধের অভ্যুত্থান",
@@ -649,7 +650,7 @@ export default function Portfolio() {
                       }
                     >
                       <ExternalLink className="mr-1 h-3 w-3" />
-                      {book.orderLink !== "#" ? "Order" : "Buy"}
+                      Order Now
                     </Button>
                   </div>
                 </CardContent>
