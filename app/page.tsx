@@ -890,7 +890,7 @@ export default function Portfolio() {
                     },
                     { title: "গুজব", link: "https://youtu.be/jzy0Ok0fibw" },
                     {
-                      title: "মানসিক ডাক্তার",
+                      title: "মানবতার  ডাক্তার",
                       link: "https://youtu.be/-vx6G95a1f0",
                     },
                     { title: "যাকাত", link: "https://youtu.be/N8q3lIKL_0k" },
