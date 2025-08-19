@@ -1,5 +1,6 @@
 // app/layout.tsx
 import type { Metadata } from "next";
+import Script from "next/script"; // For Google CSE
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
@@ -20,21 +21,26 @@ export const metadata: Metadata = {
     "poetry",
     "lyrics",
   ],
-  authors: [{ name: "Rakibul Ahsan Minar", url: "https://yourdomain.com" }],
+  authors: [
+    {
+      name: "Rakibul Ahsan Minar",
+      url: "https://rakibul-ahsan-minar.vercel.app",
+    },
+  ],
   creator: "Rakibul Ahsan Minar",
   publisher: "Rakibul Ahsan Minar",
-  metadataBase: new URL("https://yourdomain.com"), // 🔗 Replace with real domain
+  metadataBase: new URL("https://rakibul-ahsan-minar.vercel.app"),
   openGraph: {
     title: "Rakibul Ahsan Minar | Official Portfolio",
     description:
       "Writer • Poet • Songwriter • Nasheed Artist. Discover books, Islamic nasheed, and poetry by Rakibul Ahsan Minar.",
-    url: "https://yourdomain.com",
+    url: "https://rakibul-ahsan-minar.vercel.app",
     siteName: "Rakibul Ahsan Minar",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "https://yourdomain.com/images/rakibul-with-book.jpg", // ✅ update with hosted image
+        url: "https://rakibul-ahsan-minar.vercel.app/images/rakibul-with-book.jpg",
         width: 1200,
         height: 630,
         alt: "Rakibul Ahsan Minar with his book",
@@ -46,13 +52,13 @@ export const metadata: Metadata = {
     title: "Rakibul Ahsan Minar | Official Portfolio",
     description:
       "Explore the books, poetry, and nasheed songs of Rakibul Ahsan Minar.",
-    creator: "@your_twitter_handle", // ✅ replace with real Twitter handle
+    creator: "@your_twitter_handle", // replace with your real Twitter handle
     images: [
-      "https://yourdomain.com/images/rakibul-with-book.jpg", // ✅ update
+      "https://rakibul-ahsan-minar.vercel.app/images/rakibul-with-book.jpg",
     ],
   },
   icons: {
-    icon: "/favicon.ico", // ✅ ensure you have this
+    icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
   robots: {
@@ -66,7 +72,7 @@ export const metadata: Metadata = {
   },
 };
 
-// ✅ Root Layout with semantic improvements
+// ✅ Root Layout
 export default function RootLayout({
   children,
 }: {
@@ -79,10 +85,20 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Canonical Link for SEO */}
-        <link rel="canonical" href="https://yourdomain.com" />
+        {/* Canonical link for SEO */}
+        <link rel="canonical" href="https://rakibul-ahsan-minar.vercel.app" />
       </head>
-      <body className="antialiased bg-white text-slate-800">{children}</body>
+      <body className="antialiased bg-white text-slate-800">
+        {/* Google Custom Search Engine */}
+        <Script
+          strategy="afterInteractive"
+          src="https://cse.google.com/cse.js?cx=9546ff0f395374aed"
+        />
+        <div className="gcse-search"></div>
+
+        {/* Render App Content */}
+        {children}
+      </body>
     </html>
   );
 }
