@@ -1045,7 +1045,7 @@ export default function Portfolio() {
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <Music className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
+                      <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-lg sm:text-xl font-semibold text-slate-800">
