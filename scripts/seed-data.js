@@ -1,9 +1,9 @@
 // scripts\seed-data.js
-require("dotenv").config(); // Add this line at the top
 const mongoose = require("mongoose");
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_URI =
+  "mongodb+srv://nrbnayon:chatters@cluster0.f6x2ow6.mongodb.net/Rahik?retryWrites=true&w=majority";
 
 // Book schema
 const BookSchema = new mongoose.Schema(
