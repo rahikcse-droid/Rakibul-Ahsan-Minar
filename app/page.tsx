@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   BookOpen,
-  Music,
   Mail,
   Phone,
   Facebook,
@@ -49,6 +48,7 @@ interface Song {
 // Navigation Component
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
