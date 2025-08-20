@@ -158,12 +158,12 @@ export default function Portfolio() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [contactForm, setContactForm] = useState({
-    name: '',
-    email: '',
-    message: '',
+    name: "",
+    email: "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [submitMessage, setSubmitMessage] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -172,8 +172,8 @@ export default function Portfolio() {
   const fetchData = async () => {
     try {
       const [booksResponse, songsResponse] = await Promise.all([
-        fetch('/api/books'),
-        fetch('/api/songs'),
+        fetch("/api/books"),
+        fetch("/api/songs"),
       ]);
 
       if (booksResponse.ok) {
@@ -186,7 +186,7 @@ export default function Portfolio() {
         setSongs(songsData);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -195,25 +195,25 @@ export default function Portfolio() {
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmitMessage('');
+    setSubmitMessage("");
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
+      const response = await fetch("/api/contact", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(contactForm),
       });
 
       if (response.ok) {
-        setSubmitMessage('Message sent successfully!');
-        setContactForm({ name: '', email: '', message: '' });
+        setSubmitMessage("Message sent successfully!");
+        setContactForm({ name: "", email: "", message: "" });
       } else {
-        setSubmitMessage('Failed to send message. Please try again.');
+        setSubmitMessage("Failed to send message. Please try again.");
       }
     } catch (error) {
-      setSubmitMessage('Failed to send message. Please try again.');
+      setSubmitMessage("Failed to send message. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -694,12 +694,12 @@ export default function Portfolio() {
                 </h3>
                 <div className="w-24 h-1 bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 mx-auto rounded"></div>
                 <p className="text-slate-600 mt-2">
-                  {allNasheedSongs.length} Songs - Various Artists
+                  {songs?.length} Songs - Various Artists
                 </p>
               </div>
 
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {displayedNasheed.map((song, index) => (
+                {displayedSongs.map((song, index) => (
                   <Card
                     key={index}
                     className="hover:shadow-md transition-shadow"
@@ -890,11 +890,13 @@ export default function Portfolio() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {submitMessage && (
-                  <div className={`p-3 rounded-md text-sm ${
-                    submitMessage.includes('successfully') 
-                      ? 'bg-green-50 text-green-700 border border-green-200' 
-                      : 'bg-red-50 text-red-700 border border-red-200'
-                  }`}>
+                  <div
+                    className={`p-3 rounded-md text-sm ${
+                      submitMessage.includes("successfully")
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                    }`}
+                  >
                     {submitMessage}
                   </div>
                 )}
@@ -903,11 +905,16 @@ export default function Portfolio() {
                     <label className="text-sm font-medium text-slate-700">
                       Name
                     </label>
-                    <Input 
-                      placeholder="Your name" 
+                    <Input
+                      placeholder="Your name"
                       className="mt-1"
                       value={contactForm.name}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       required
                     />
                   </div>
@@ -920,7 +927,12 @@ export default function Portfolio() {
                       placeholder="your@email.com"
                       className="mt-1"
                       value={contactForm.email}
-                      onChange={(e) => setContactForm(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={(e) =>
+                        setContactForm((prev) => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       required
                     />
                   </div>
@@ -933,16 +945,21 @@ export default function Portfolio() {
                     placeholder="Your message..."
                     className="mt-1 min-h-[120px]"
                     value={contactForm.message}
-                    onChange={(e) => setContactForm(prev => ({ ...prev, message: e.target.value }))}
+                    onChange={(e) =>
+                      setContactForm((prev) => ({
+                        ...prev,
+                        message: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </div>
-                <Button 
+                <Button
                   className="w-full bg-slate-800 hover:bg-slate-700"
                   disabled={isSubmitting}
                   onClick={handleContactSubmit}
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </CardContent>
             </Card>
