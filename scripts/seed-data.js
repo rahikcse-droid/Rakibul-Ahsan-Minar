@@ -106,61 +106,266 @@ const songsData = [
     title: "আল্লাহ আল্লাহ",
     artist: "সাইফুল্লাহ মানসুর",
     link: "https://youtu.be/N3xkupepVkw",
-    category: "nasheed",
   },
   {
     title: "বাবা",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/_JvNtbt9ufA",
-    category: "protest",
   },
   {
     title: "বাবা ২",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/hY43zZG25T4",
-    category: "protest",
   },
   {
     title: "তোমার প্রিয়",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/xJ-Ema0ZOnU",
-    category: "spiritual",
   },
   {
     title: "যাকাত",
     artist: "মশিউর রহমান লিটন",
     link: "https://youtu.be/N8q3lIKL_0k",
-    category: "nasheed",
   },
   {
     title: "দাওয়াত",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/_3201znHKRs",
-    category: "nasheed",
   },
   {
     title: "মানবতার ডাক্তার",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/-vx6G95a1f0",
-    category: "protest",
   },
   {
     title: "গুজব",
     artist: "মশিউর রহমান",
     link: "https://youtu.be/S-iWcLtPALE",
-    category: "protest",
+  },
+  {
+    title: "দেশ জুড়ে আজ শুধু বিপদ",
+    artist: "লিটন হাফিজ চৌধুরি",
+    link: "https://youtu.be/qSAYx0RH7aw",
   },
   {
     title: "জাহান্নাম",
     artist: "ইকবাল হুসাইন জীবন",
     link: "https://youtu.be/zA-AfuOt2KY",
-    category: "spiritual",
   },
   {
     title: "সিয়ামের দিন",
     artist: "ইকবাল হুসাইন জীবন",
     link: "https://youtu.be/Pl1KeFWaTCA",
-    category: "nasheed",
+  },
+  {
+    title: "আর রহমান",
+    artist: "গাজী আনাস রওশন",
+    link: "https://youtu.be/yeV9vAxm-7g",
+  },
+  {
+    title: "পথের ধারে",
+    artist: "গাজী আনাম রওশন",
+    link: "https://youtu.be/hV2voKK3NJw",
+  },
+  {
+    title: "আমার গানের ভাষা",
+    artist: "গাজী আনাস রওশন",
+    link: "https://youtu.be/bUvbTpgASow",
+  },
+  {
+    title: "রহমান",
+    artist: "শাহাবুদ্দিন শিহাব",
+    link: "https://youtu.be/Zc9PwqbOqwY",
+  },
+  {
+    title: "মান রাব্বুকা",
+    artist: "শাহাবুদ্দিন শিহাব",
+    link: "https://youtu.be/FDOhU0Irkgg",
+  },
+  {
+    title: "প্রাণের রাসূল",
+    artist: "দিদারুল ইসলাম",
+    link: "https://youtu.be/mJU0u7Ch50M",
+  },
+  {
+    title: "কারাগার",
+    artist: "দিদারুল ইসলাম",
+    link: "https://youtu.be/DOhXzKqWwm8",
+  },
+  {
+    title: "জাগরণ",
+    artist: "দিদারুল ইসলাম",
+    link: "https://youtu.be/Pwq9qX1Fzjg",
+  },
+  {
+    title: "ব্যথিত প্রবাসী",
+    artist: "মাহমুদ ফয়সাল",
+    link: "https://youtu.be/jWqz50Aob0U",
+  },
+  {
+    title: "ক্ষণিক জীবন",
+    artist: "মাহমুদ ফয়সাল",
+    link: "https://youtu.be/LC2Ik9DhkOI",
+  },
+  {
+    title: "রাহবার",
+    artist: "মাহমুদ ফয়সাল ও অন্যান্য",
+    link: "https://youtu.be/kdF3wLXYNYc",
+  },
+  {
+    title: "ধর্ষণের প্রতিবাদে ফাঁসি চাই",
+    artist: "মাহমুদ ফয়সাল ও অন্যান্য",
+    link: "https://youtu.be/wXDUp2K1yqg",
+  },
+  {
+    title: "রমজানের স্বাগত নাশীদ",
+    artist: "মাহফুজ মামুন ও অন্যান্য",
+    link: "https://youtu.be/KnzXpD1FEsk",
+  },
+  {
+    title: "আল্লাহু",
+    artist: "মাহফুজ মামুন",
+    link: "https://youtu.be/tZx23Jn9aZE",
+  },
+  {
+    title: "মনে কি পড়ে সেই দিন",
+    artist: "মাহবুব রিয়াজ ও অন্যান্য",
+    link: "https://youtu.be/S-TfWSNVmwI",
+  },
+  {
+    title: "শিবির",
+    artist: "মাহবুব রিয়াজ ও অন্যান্য",
+    link: "https://youtu.be/xm85oIu7wlA",
+  },
+  {
+    title: "ফজর",
+    artist: "মুনায়েম বিল্লাহ",
+    link: "https://youtu.be/5VAOFJz779c",
+  },
+  {
+    title: "ঘুম",
+    artist: "পিএম মিজান",
+    link: "https://youtu.be/U3syGMGa220",
+  },
+  {
+    title: "প্রজাপতি",
+    artist: "ফখরুল ইসলাম",
+    link: "https://youtu.be/VEbT6auZh5g",
+  },
+  {
+    title: "ভালোবাসা দান",
+    artist: "আবদুল্লাহ আল নোমান",
+    link: "https://youtu.be/MjfbPtkJRvU",
+  },
+  {
+    title: "ইয়া ইলাহী",
+    artist: "মাসুদ হুজাইফি",
+    link: "https://youtu.be/uXqmnO7MWUI",
+  },
+  {
+    title: "স্বাধীনতা",
+    artist: "সারগাম শিল্পী গোষ্ঠি",
+    link: "https://youtu.be/1fvjrkttkB4",
+  },
+  {
+    title: "বাংলাদেশ",
+    artist: "সারগাম শিল্পী গোষ্ঠি",
+    link: "https://youtu.be/sUERP-yba28",
+  },
+  {
+    title: "বিজয়ের সংগ্রাম",
+    artist: "সিন্দাবাদ শিল্পী গোষ্ঠী",
+    link: "https://youtu.be/TREgCUK4-tk",
+  },
+  {
+    title: "গল্প কথার দেশ",
+    artist: "অনুপম শিল্পী গোষ্ঠী",
+    link: "https://youtu.be/H5fQb2c0wHM",
+  },
+  {
+    title: "রহম ধারা",
+    artist: "আরাফাত রহমান ও অন্যান্য",
+    link: "https://youtu.be/rVIvKXXAmK8",
+  },
+  {
+    title: "মানুষ কতো নিষ্ঠুর",
+    artist: "কবির বিন সামাদ",
+    link: "https://youtu.be/qwF5HyISdpU",
+  },
+  {
+    title: "রেনু হত্যার প্রতিবাদে গান",
+    artist: "মইনুল ইসলাম",
+    link: "https://youtu.be/-vCJgMsr2Qc",
+  },
+  {
+    title: "শহীদ মুরসী",
+    artist: "মইনুল ইসলাম",
+    link: "https://youtu.be/yQk5Gy0SEu8",
+  },
+  {
+    title: "পবিত্রতার মাস",
+    artist: "আহমেদ কায়েস",
+    link: "https://youtu.be/OwXuVDz46u0",
+  },
+  {
+    title: "লাশ",
+    artist: "মাহফুজ মামুন",
+    link: "https://youtu.be/FCzU_AHJhAs",
+  },
+  {
+    title: "চোগলখোর",
+    artist: "নাশীদ একাডেমি",
+    link: "https://youtu.be/_TOKy4aV01E",
+  },
+  {
+    title: "বাংলা ভাষা",
+    artist: "সিন্দাবাদ শিল্পীগোষ্ঠী",
+    link: "https://youtu.be/WPnNMEFURNI",
+  },
+  {
+    title: "কুরানের পাখি",
+    artist: "শাহাবুদ্দিন শিহাব",
+    link: "https://youtu.be/Jbic3-H3CHE",
+  },
+  {
+    title: "ইসলাম",
+    artist: "ইকবাল হুসাইন জীবন",
+    link: "https://youtu.be/pHSAFgVMy5g?si=TqYNnAdzx1AX5eaL",
+  },
+  {
+    title: "রাসূলের মত চাঁদ",
+    artist: "ইকবাল হুসাইন জীবন",
+    link: "https://youtu.be/64VxgRjW4-w?si=BB15jX2VAw-Zxzjs",
+  },
+  {
+    title: "মৃত্যু",
+    artist: "ইকবাল হুসাইন জীবন",
+    link: "https://youtu.be/PcJMNV95TTM?si=ovWNb4ZSqh2BB2Ez",
+  },
+  {
+    title: "হৃদয়ের কথা",
+    artist: "ইকবাল হুসাইন জীবন",
+    link: "https://youtu.be/UemwIzdntDQ?si=Eakld1wluuF7Y7DN",
+  },
+  {
+    title: "সিয়ামের দিন",
+    artist: "ইকবাল হুসাইন জীবন",
+    link: "https://youtu.be/Pl1KeFWaTCA?si=ddVmT_XeTteuBxne",
+  },
+  {
+    title: "জামাতের কর্মী",
+    artist: "মাহমুদ ফয়সাল",
+    link: "https://youtu.be/C7PEpqXzXrM?si=vO7n_Y6MQDzXYcEs",
+  },
+  {
+    title: "মায়ের গান",
+    artist: "মাহমুদ ফয়সাল",
+    link: "https://youtu.be/9VvC8d4JuGw?si=R7SiZ_YOPIvkqR6U",
+  },
+  {
+    title: "আমাদের কাফেলা",
+    artist: "মাহমুদ ফয়সাল",
+    link: "https://youtu.be/VYwKIPu_CUo",
   },
 ];
 
