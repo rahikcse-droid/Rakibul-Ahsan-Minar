@@ -94,9 +94,6 @@ export default function RootLayout({
           strategy="afterInteractive"
           src="https://cse.google.com/cse.js?cx=9546ff0f395374aed"
         />
-        <div className="gcse-search"></div>
-
-        {/* Render App Content */}
         {children}
       </body>
     </html>

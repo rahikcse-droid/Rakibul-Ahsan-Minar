@@ -5,7 +5,7 @@ import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -158,7 +158,7 @@ export default function AdminContacts() {
                   <SelectValue placeholder="All Messages" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Messages</SelectItem>
+                  <SelectItem value="all">All Messages</SelectItem>
                   <SelectItem value="false">Unread</SelectItem>
                   <SelectItem value="true">Read</SelectItem>
                 </SelectContent>

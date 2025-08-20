@@ -1,23 +1,30 @@
+// app\admin\songs\page.tsx
 "use client";
 
-import { useState, useEffect } from 'react';
-import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import { useState, useEffect } from "react";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   ExternalLink,
   Play,
   Eye,
-  EyeOff
-} from 'lucide-react';
-import Link from 'next/link';
+  EyeOff,
+} from "lucide-react";
+import Link from "next/link";
 
 interface Song {
   _id: string;
@@ -33,8 +40,8 @@ interface Song {
 export default function AdminSongs() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -46,9 +53,9 @@ export default function AdminSongs() {
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: '10',
+        limit: "10",
         search: searchTerm,
-        category: categoryFilter,
+        category: categoryFilter === "all" ? "" : categoryFilter,
       });
 
       const response = await fetch(`/api/admin/songs?${params}`);
@@ -58,34 +65,34 @@ export default function AdminSongs() {
         setTotalPages(data.pagination.pages);
       }
     } catch (error) {
-      console.error('Error fetching songs:', error);
+      console.error("Error fetching songs:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this song?')) return;
+    if (!confirm("Are you sure you want to delete this song?")) return;
 
     try {
       const response = await fetch(`/api/admin/songs/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
 
       if (response.ok) {
         fetchSongs();
       }
     } catch (error) {
-      console.error('Error deleting song:', error);
+      console.error("Error deleting song:", error);
     }
   };
 
   const togglePublished = async (id: string, isPublished: boolean) => {
     try {
       const response = await fetch(`/api/admin/songs/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ isPublished: !isPublished }),
       });
@@ -94,24 +101,31 @@ export default function AdminSongs() {
         fetchSongs();
       }
     } catch (error) {
-      console.error('Error updating song:', error);
+      console.error("Error updating song:", error);
     }
   };
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'nasheed': return 'bg-green-100 text-green-800';
-      case 'protest': return 'bg-red-100 text-red-800';
-      case 'spiritual': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "nasheed":
+        return "bg-green-100 text-green-800";
+      case "protest":
+        return "bg-red-100 text-red-800";
+      case "spiritual":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
+      <div className="space-y-6" suppressHydrationWarning={true}>
+        <div
+          className="flex justify-between items-center"
+          suppressHydrationWarning={true}
+        >
+          <div suppressHydrationWarning={true}>
             <h1 className="text-3xl font-bold text-slate-800">Songs</h1>
             <p className="text-slate-600 mt-2">Manage your nasheed and songs</p>
           </div>
@@ -124,10 +138,13 @@ export default function AdminSongs() {
         </div>
 
         {/* Filters */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
+        <Card suppressHydrationWarning={true}>
+          <CardContent className="pt-6" suppressHydrationWarning={true}>
+            <div
+              className="flex flex-col sm:flex-row gap-4"
+              suppressHydrationWarning={true}
+            >
+              <div className="relative flex-1" suppressHydrationWarning={true}>
                 <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
                 <Input
                   placeholder="Search songs..."
@@ -141,7 +158,7 @@ export default function AdminSongs() {
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Categories</SelectItem>
+                  <SelectItem value="all">All Categories</SelectItem>
                   <SelectItem value="nasheed">Nasheed</SelectItem>
                   <SelectItem value="protest">Protest</SelectItem>
                   <SelectItem value="spiritual">Spiritual</SelectItem>
@@ -154,19 +171,44 @@ export default function AdminSongs() {
 
         {/* Songs List */}
         {isLoading ? (
-          <div className="space-y-4">
+          <div className="space-y-4" suppressHydrationWarning={true}>
             {[...Array(5)].map((_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-2 flex-1">
-                      <div className="h-4 bg-slate-200 rounded w-1/3"></div>
-                      <div className="h-3 bg-slate-200 rounded w-1/4"></div>
+              <Card
+                key={i}
+                className="animate-pulse"
+                suppressHydrationWarning={true}
+              >
+                <CardContent className="p-6" suppressHydrationWarning={true}>
+                  <div
+                    className="flex items-center justify-between"
+                    suppressHydrationWarning={true}
+                  >
+                    <div
+                      className="space-y-2 flex-1"
+                      suppressHydrationWarning={true}
+                    >
+                      <div
+                        className="h-4 bg-slate-200 rounded w-1/3"
+                        suppressHydrationWarning={true}
+                      ></div>
+                      <div
+                        className="h-3 bg-slate-200 rounded w-1/4"
+                        suppressHydrationWarning={true}
+                      ></div>
                     </div>
-                    <div className="flex gap-2">
-                      <div className="h-8 w-8 bg-slate-200 rounded"></div>
-                      <div className="h-8 w-8 bg-slate-200 rounded"></div>
-                      <div className="h-8 w-8 bg-slate-200 rounded"></div>
+                    <div className="flex gap-2" suppressHydrationWarning={true}>
+                      <div
+                        className="h-8 w-8 bg-slate-200 rounded"
+                        suppressHydrationWarning={true}
+                      ></div>
+                      <div
+                        className="h-8 w-8 bg-slate-200 rounded"
+                        suppressHydrationWarning={true}
+                      ></div>
+                      <div
+                        className="h-8 w-8 bg-slate-200 rounded"
+                        suppressHydrationWarning={true}
+                      ></div>
                     </div>
                   </div>
                 </CardContent>
@@ -174,24 +216,35 @@ export default function AdminSongs() {
             ))}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-4" suppressHydrationWarning={true}>
             {songs.map((song) => (
-              <Card key={song._id}>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-2">
+              <Card key={song._id} suppressHydrationWarning={true}>
+                <CardContent className="p-6" suppressHydrationWarning={true}>
+                  <div
+                    className="flex items-center justify-between"
+                    suppressHydrationWarning={true}
+                  >
+                    <div
+                      className="flex-1 min-w-0"
+                      suppressHydrationWarning={true}
+                    >
+                      <div
+                        className="flex items-center gap-3 mb-2"
+                        suppressHydrationWarning={true}
+                      >
                         <h3 className="font-semibold text-slate-800 truncate">
                           {song.title}
                         </h3>
-                        <Badge 
-                          variant="secondary" 
+                        <Badge
+                          variant="secondary"
                           className={getCategoryColor(song.category)}
                         >
                           {song.category}
                         </Badge>
-                        <Badge variant={song.isPublished ? 'default' : 'secondary'}>
-                          {song.isPublished ? 'Published' : 'Draft'}
+                        <Badge
+                          variant={song.isPublished ? "default" : "secondary"}
+                        >
+                          {song.isPublished ? "Published" : "Draft"}
                         </Badge>
                       </div>
                       <p className="text-sm text-slate-600 mb-1">
@@ -201,12 +254,17 @@ export default function AdminSongs() {
                         Created: {new Date(song.createdAt).toLocaleDateString()}
                       </p>
                     </div>
-                    
-                    <div className="flex gap-2 ml-4">
+
+                    <div
+                      className="flex gap-2 ml-4"
+                      suppressHydrationWarning={true}
+                    >
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => togglePublished(song._id, song.isPublished)}
+                        onClick={() =>
+                          togglePublished(song._id, song.isPublished)
+                        }
                       >
                         {song.isPublished ? (
                           <EyeOff className="h-3 w-3" />
@@ -217,7 +275,7 @@ export default function AdminSongs() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => window.open(song.link, '_blank')}
+                        onClick={() => window.open(song.link, "_blank")}
                       >
                         <Play className="h-3 w-3" />
                       </Button>
@@ -243,7 +301,10 @@ export default function AdminSongs() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center gap-2">
+          <div
+            className="flex justify-center gap-2"
+            suppressHydrationWarning={true}
+          >
             <Button
               variant="outline"
               disabled={currentPage === 1}

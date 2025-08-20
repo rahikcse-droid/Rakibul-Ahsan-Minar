@@ -1,3 +1,5 @@
+// scripts\create-admin.js
+require("dotenv").config(); // Add this line at the top
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 
@@ -59,8 +61,8 @@ async function createAdmin() {
 
     await admin.save();
     console.log("Admin created successfully!");
-    console.log("Email: admin@rakibul.com");
-    console.log("Password: admin123456");
+    console.log(`Email: ${process.env.ADMIN_EMAIL || "admin@rakibul.com"}`);
+    console.log(`Password: ${process.env.ADMIN_PASSWORD || "admin123456"}`);
   } catch (error) {
     console.error("Error creating admin:", error);
   } finally {
