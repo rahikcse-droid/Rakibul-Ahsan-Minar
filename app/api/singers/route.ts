@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
     
-    const singers = await Singer.find({ isActive: true }).sort({ createdAt: -1 });
+    const singers = await Singer.find({ isActive: true }).sort({ order: 1 });
 
     return NextResponse.json(singers);
   } catch (error) {
