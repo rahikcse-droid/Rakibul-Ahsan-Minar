@@ -1,18 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface EditSingerProps {
   params: { id: string };
@@ -20,14 +20,15 @@ interface EditSingerProps {
 
 export default function EditSinger({ params }: EditSingerProps) {
   const [formData, setFormData] = useState({
-    name: '',
-    image: '',
-    bio: '',
+    name: "",
+    image: "",
+    bio: "",
     isActive: true,
+    order: 0, // Added order field
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingData, setIsLoadingData] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
@@ -40,15 +41,16 @@ export default function EditSinger({ params }: EditSingerProps) {
       if (response.ok) {
         const singer = await response.json();
         setFormData({
-          name: singer.name || '',
-          image: singer.image || '',
-          bio: singer.bio || '',
+          name: singer.name || "",
+          image: singer.image || "",
+          bio: singer.bio || "",
           isActive: singer.isActive ?? true,
+          order: singer.order || 0, // Added order field
         });
       }
     } catch (error) {
-      console.error('Error fetching singer:', error);
-      setError('Failed to load singer data');
+      console.error("Error fetching singer:", error);
+      setError("Failed to load singer data");
     } finally {
       setIsLoadingData(false);
     }
@@ -57,32 +59,32 @@ export default function EditSinger({ params }: EditSingerProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const response = await fetch(`/api/admin/singers/${params.id}`, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to update singer');
+        throw new Error(data.error || "Failed to update singer");
       }
 
-      router.push('/admin/singers');
+      router.push("/admin/singers");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update singer');
+      setError(err instanceof Error ? err.message : "Failed to update singer");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   if (isLoadingData) {
@@ -131,7 +133,9 @@ export default function EditSinger({ params }: EditSingerProps) {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -141,7 +145,9 @@ export default function EditSinger({ params }: EditSingerProps) {
                     <Input
                       id="image"
                       value={formData.image}
-                      onChange={(e) => handleInputChange('image', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("image", e.target.value)
+                      }
                       placeholder="https://example.com/singer-image.jpg"
                       required
                     />
@@ -152,9 +158,23 @@ export default function EditSinger({ params }: EditSingerProps) {
                     <Textarea
                       id="bio"
                       value={formData.bio}
-                      onChange={(e) => handleInputChange('bio', e.target.value)}
+                      onChange={(e) => handleInputChange("bio", e.target.value)}
                       rows={4}
                       placeholder="Brief biography of the singer..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="order">Order *</Label>
+                    <Input
+                      id="order"
+                      type="number"
+                      value={formData.order}
+                      onChange={(e) =>
+                        handleInputChange("order", parseInt(e.target.value))
+                      }
+                      placeholder="Enter display order (e.g., 1, 2, 3...)"
+                      required
                     />
                   </div>
                 </CardContent>
@@ -173,7 +193,9 @@ export default function EditSinger({ params }: EditSingerProps) {
                     <Switch
                       id="active"
                       checked={formData.isActive}
-                      onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isActive", checked)
+                      }
                     />
                   </div>
                 </CardContent>
@@ -196,10 +218,10 @@ export default function EditSinger({ params }: EditSingerProps) {
                   )}
                   <div className="text-center">
                     <p className="font-semibold text-slate-800">
-                      {formData.name || 'Singer Name'}
+                      {formData.name || "Singer Name"}
                     </p>
                     <p className="text-sm text-slate-600 mt-1">
-                      {formData.bio || 'No biography provided'}
+                      {formData.bio || "No biography provided"}
                     </p>
                   </div>
                 </CardContent>
