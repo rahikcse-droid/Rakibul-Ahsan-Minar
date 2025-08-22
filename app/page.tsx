@@ -350,7 +350,7 @@ export default function Portfolio() {
                 </p>
                 <p>
                   With a heart rooted in spirituality and a voice raised against
-                  injustice, I've written nany{" "}
+                  injustice, I've written many{" "}
                   <strong className="text-amber-600">
                     original songs and nasheed
                   </strong>
