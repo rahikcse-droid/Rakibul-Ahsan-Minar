@@ -346,7 +346,7 @@ export default function Portfolio() {
                   <strong className="text-slate-800">
                     Rakibul Ahsan Minar
                   </strong>
-                  , a Bangladeshi writer, poet, lyricist and the founder of the Potherful Foundation.
+                  , a Bangladeshi writer, poet, lyricist, as well as the founder of the Potherful Foundation.
                 </p>
                 <p>
                   With a heart rooted in spirituality and a voice raised against
