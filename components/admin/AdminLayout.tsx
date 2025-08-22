@@ -6,6 +6,7 @@ import {
   BookOpen,
   Music,
   MessageSquare,
+  Users,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -52,6 +53,11 @@ export default function AdminLayout({
       name: "Songs",
       icon: Music,
       href: "/admin/songs",
+    },
+    {
+      name: "Singers",
+      icon: Users,
+      href: "/admin/singers",
     },
     {
       name: "Contacts",

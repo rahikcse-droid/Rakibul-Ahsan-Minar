@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Song from '@/models/Song';
+import Singer from '@/models/Singer';
 import { verifyToken, getTokenFromRequest } from '@/lib/auth';
 
-// GET all songs
+// GET all singers
 export async function GET(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const search = searchParams.get('search') || '';
-    const category = searchParams.get('category') || '';
     
     const skip = (page - 1) * limit;
     
@@ -25,25 +24,20 @@ export async function GET(request: NextRequest) {
     
     if (search) {
       query.$or = [
-        { title: { $regex: search, $options: 'i' } },
-        { artist: { $regex: search, $options: 'i' } }
+        { name: { $regex: search, $options: 'i' } },
+        { bio: { $regex: search, $options: 'i' } }
       ];
     }
-    
-    if (category) {
-      query.category = category;
-    }
 
-    const songs = await Song.find(query)
-      .populate('singerId', 'name')
+    const singers = await Singer.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Song.countDocuments(query);
+    const total = await Singer.countDocuments(query);
 
     return NextResponse.json({
-      songs,
+      singers,
       pagination: {
         page,
         limit,
@@ -52,7 +46,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Get songs error:', error);
+    console.error('Get singers error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -60,7 +54,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// CREATE new song
+// CREATE new singer
 export async function POST(request: NextRequest) {
   try {
     const token = getTokenFromRequest(request);
@@ -70,13 +64,13 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     
-    const songData = await request.json();
-    const song = new Song(songData);
-    await song.save();
+    const singerData = await request.json();
+    const singer = new Singer(singerData);
+    await singer.save();
 
-    return NextResponse.json(song, { status: 201 });
+    return NextResponse.json(singer, { status: 201 });
   } catch (error) {
-    console.error('Create song error:', error);
+    console.error('Create singer error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

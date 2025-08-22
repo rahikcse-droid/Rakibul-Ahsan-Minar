@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
@@ -15,10 +16,16 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
 
+interface Singer {
+  _id: string;
+  name: string;
+}
+
 export default function NewSong() {
   const [formData, setFormData] = useState({
     title: '',
     artist: '',
+    singerId: '',
     link: '',
     category: 'nasheed',
     isPublished: true,
@@ -28,7 +35,24 @@ export default function NewSong() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [singers, setSingers] = useState<Singer[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetchSingers();
+  }, []);
+
+  const fetchSingers = async () => {
+    try {
+      const response = await fetch('/api/admin/singers');
+      if (response.ok) {
+        const data = await response.json();
+        setSingers(data.singers);
+      }
+    } catch (error) {
+      console.error('Error fetching singers:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +135,26 @@ export default function NewSong() {
                         required
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="singer">Singer</Label>
+                    <Select
+                      value={formData.singerId}
+                      onValueChange={(value) => handleInputChange('singerId', value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a singer" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">No Singer</SelectItem>
+                        {singers.map((singer) => (
+                          <SelectItem key={singer._id} value={singer._id}>
+                            {singer.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -41,8 +41,20 @@ interface Song {
   _id: string;
   title: string;
   artist: string;
+  singerId?: {
+    _id: string;
+    name: string;
+    image: string;
+  };
   link: string;
   category: string;
+}
+
+interface Singer {
+  _id: string;
+  name: string;
+  image: string;
+  bio?: string;
 }
 
 // Navigation Component
@@ -156,6 +168,9 @@ export default function Portfolio() {
   const [showAllNasheed, setShowAllNasheed] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [songs, setSongs] = useState<Song[]>([]);
+  const [singers, setSingers] = useState<Singer[]>([]);
+  const [singerSongs, setSingerSongs] = useState<{[key: string]: Song[]}>({});
+  const [showMoreSongs, setShowMoreSongs] = useState<{[key: string]: boolean}>({});
   const [isLoading, setIsLoading] = useState(true);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -171,9 +186,10 @@ export default function Portfolio() {
 
   const fetchData = async () => {
     try {
-      const [booksResponse, songsResponse] = await Promise.all([
+      const [booksResponse, songsResponse, singersResponse] = await Promise.all([
         fetch("/api/books"),
         fetch("/api/songs"),
+        fetch("/api/singers"),
       ]);
 
       if (booksResponse.ok) {
@@ -184,6 +200,22 @@ export default function Portfolio() {
       if (songsResponse.ok) {
         const songsData = await songsResponse.json();
         setSongs(songsData);
+      }
+
+      if (singersResponse.ok) {
+        const singersData = await singersResponse.json();
+        setSingers(singersData);
+        
+        // Fetch songs for each singer
+        const singerSongsData: {[key: string]: Song[]} = {};
+        for (const singer of singersData) {
+          const singerSongsResponse = await fetch(`/api/songs?singerId=${singer._id}`);
+          if (singerSongsResponse.ok) {
+            const singerSongsResult = await singerSongsResponse.json();
+            singerSongsData[singer._id] = singerSongsResult;
+          }
+        }
+        setSingerSongs(singerSongsData);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -221,6 +253,13 @@ export default function Portfolio() {
 
   const displayedBooks = showAllBooks ? books : books.slice(0, 3);
   const displayedSongs = showAllNasheed ? songs : songs.slice(0, 9);
+
+  const toggleShowMoreSongs = (singerId: string) => {
+    setShowMoreSongs(prev => ({
+      ...prev,
+      [singerId]: !prev[singerId]
+    }));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-red-100">
@@ -445,250 +484,115 @@ export default function Portfolio() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="space-y-12">
-            {/* Featured Artists Sections */}
-            <div className="space-y-12">
-              {/* Artist: Iqbal Hossain Jibon */}
-              <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                    শিল্পী ইকবাল হুসাইন জীবন
-                  </h3>
-                  <div className="flex items-center justify-center mb-6">
-                    <Image
-                      src="/images/singer-iqbal-hossain-jibon.jpg"
-                      alt="শিল্পী ইকবাল হুসাইন জীবন"
-                      width={120}
-                      height={120}
-                      className="rounded-full shadow-lg object-cover"
-                    />
-                  </div>
-                  <div className="w-24 h-1 bg-emerald-500 mx-auto rounded"></div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      title: "ইসলাম",
-                      link: "https://youtu.be/pHSAFgVMy5g?si=TqYNnAdzx1AX5eaL",
-                    },
-                    {
-                      title: "জাহান্নাম",
-                      link: "https://youtu.be/zA-AfuOt2KY?si=eCm4fINVTBrbolr6",
-                    },
-                    {
-                      title: "রাসূলের মত চাঁদ",
-                      link: "https://youtu.be/64VxgRjW4-w?si=BB15jX2VAw-Zxzjs",
-                    },
-                    {
-                      title: "মৃত্যু",
-                      link: "https://youtu.be/PcJMNV95TTM?si=ovWNb4ZSqh2BB2Ez",
-                    },
-                    {
-                      title: "হৃদয়ের কথা",
-                      link: "https://youtu.be/UemwIzdntDQ?si=Eakld1wluuF7Y7DN",
-                    },
-                    {
-                      title: "সিয়ামের দিন",
-                      link: "https://youtu.be/Pl1KeFWaTCA?si=ddVmT_XeTteuBxne",
-                    },
-                  ].map((song, index) => (
-                    <Card
-                      key={index}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardContent className="flex items-center justify-between p-4">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
-                            {song.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm text-slate-600">
-                            Islamic Nasheed
+            {/* Dynamic Singer Sections */}
+            {singers.length > 0 && (
+              <div className="space-y-12">
+                {singers.map((singer, singerIndex) => {
+                  const singerSongsData = singerSongs[singer._id] || [];
+                  const displayedSingerSongs = showMoreSongs[singer._id] 
+                    ? singerSongsData 
+                    : singerSongsData.slice(0, 6);
+                  
+                  const colors = [
+                    { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-50' },
+                    { bg: 'bg-blue-500', hover: 'hover:bg-blue-50' },
+                    { bg: 'bg-red-500', hover: 'hover:bg-red-50' },
+                    { bg: 'bg-purple-500', hover: 'hover:bg-purple-50' },
+                    { bg: 'bg-orange-500', hover: 'hover:bg-orange-50' },
+                  ];
+                  const colorIndex = singerIndex % colors.length;
+                  
+                  if (singerSongsData.length === 0) return null;
+                  
+                  return (
+                    <div key={singer._id} className="space-y-6">
+                      <div className="text-center mb-8">
+                        <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+                          {singer.name}
+                        </h3>
+                        <div className="flex items-center justify-center mb-6">
+                          <Image
+                            src={singer.image || '/placeholder.svg'}
+                            alt={singer.name}
+                            width={120}
+                            height={120}
+                            className="rounded-full shadow-lg object-cover"
+                          />
+                        </div>
+                        <div className={`w-24 h-1 ${colors[colorIndex].bg} mx-auto rounded`}></div>
+                        {singer.bio && (
+                          <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
+                            {singer.bio}
                           </p>
-                        </div>
-                        <div className="flex gap-2 flex-shrink-0">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="hover:bg-emerald-50"
+                        )}
+                      </div>
+
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        {displayedSingerSongs.map((song, index) => (
+                          <Card
+                            key={index}
+                            className="hover:shadow-md transition-shadow"
                           >
-                            <Play className="h-4 w-4" />
-                          </Button>
+                            <CardContent className="flex items-center justify-between p-4">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
+                                  {song.title}
+                                </h4>
+                                <p className="text-xs sm:text-sm text-slate-600">
+                                  {song.category === 'nasheed' ? 'Islamic Nasheed' : 
+                                   song.category === 'protest' ? 'Protest Song' : 
+                                   song.category === 'spiritual' ? 'Spiritual' : 'Other'}
+                                </p>
+                              </div>
+                              <div className="flex gap-2 flex-shrink-0">
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => window.open(song.link, "_blank")}
+                                  className={colors[colorIndex].hover}
+                                >
+                                  <Play className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => window.open(song.link, "_blank")}
+                                  className="text-xs hidden sm:flex"
+                                >
+                                  YouTube
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                      
+                      {singerSongsData.length > 6 && (
+                        <div className="text-center">
                           <Button
-                            size="sm"
+                            onClick={() => toggleShowMoreSongs(singer._id)}
                             variant="outline"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="text-xs hidden sm:flex"
+                            className="bg-white/80 backdrop-blur-sm border-slate-300 text-slate-700 hover:bg-slate-100"
                           >
-                            YouTube
+                            {showMoreSongs[singer._id] ? (
+                              <>
+                                <ChevronUp className="mr-2 h-4 w-4" />
+                                Show Less
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown className="mr-2 h-4 w-4" />
+                                Show More ({singerSongsData.length - 6} more songs)
+                              </>
+                            )}
                           </Button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-
-              {/* Artist: Mahmud Foysal */}
-              <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                    শিল্পী মাহমুদ ফয়সাল
-                  </h3>
-                  <div className="flex items-center justify-center mb-6">
-                    <Image
-                      src="/images/singer-mahmud-foysal.jpg"
-                      alt="শিল্পী মাহমুদ ফয়সাল"
-                      width={120}
-                      height={120}
-                      className="rounded-full shadow-lg object-cover"
-                    />
-                  </div>
-                  <div className="w-24 h-1 bg-blue-500 mx-auto rounded"></div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      title: "জামাতের কর্মী",
-                      link: "https://youtu.be/C7PEpqXzXrM?si=vO7n_Y6MQDzXYcEs",
-                    },
-                    {
-                      title: "মায়ের গান",
-                      link: "https://youtu.be/9VvC8d4JuGw?si=R7SiZ_YOPIvkqR6U",
-                    },
-                    {
-                      title: "আমাদের কাফেলা",
-                      link: "https://youtu.be/VYwKIPu_CUo",
-                    },
-                    {
-                      title: "ক্ষণিক জীবন",
-                      link: "https://youtu.be/LC2Ik9DhkOI",
-                    },
-                    {
-                      title: "ধর্ষকের ফাঁসি চাই",
-                      link: "https://youtu.be/wXDUp2K1yqg",
-                    },
-                    { title: "রাহবার", link: "https://youtu.be/kdF3wLXYNYc" },
-                  ].map((song, index) => (
-                    <Card
-                      key={index}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardContent className="flex items-center justify-between p-4">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
-                            {song.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm text-slate-600">
-                            Islamic Nasheed
-                          </p>
-                        </div>
-                        <div className="flex gap-2 flex-shrink-0">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="hover:bg-blue-50"
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="text-xs hidden sm:flex"
-                          >
-                            YouTube
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              {/* Artist: Moshiur Rahman */}
-              <div className="space-y-6">
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                    শিল্পী মশিউর রহমান
-                  </h3>
-                  <div className="flex items-center justify-center mb-6">
-                    <Image
-                      src="/images/singer-moshiur-rahman.jpg"
-                      alt="শিল্পী মশিউর রহমান"
-                      width={120}
-                      height={120}
-                      className="rounded-full shadow-lg object-cover"
-                    />
-                  </div>
-                  <div className="w-24 h-1 bg-red-500 mx-auto rounded"></div>
-                </div>
-
-                <div className="grid sm:grid-cols-2 gap-4">
-                  {[
-                    {
-                      title: "বাবা গান - ১",
-                      link: "https://youtu.be/_JvNtbt9ufA",
-                    },
-                    {
-                      title: "তোমার প্রিয়",
-                      link: "https://youtu.be/xJ-Ema0ZOnU",
-                    },
-                    { title: "দাওয়াত", link: "https://youtu.be/_3201znHKRs" },
-                    {
-                      title: "বাবা গান - ২",
-                      link: "https://youtu.be/hY43zZG25T4",
-                    },
-                    { title: "গুজব", link: "https://youtu.be/jzy0Ok0fibw" },
-                    {
-                      title: "মানবতার  ডাক্তার",
-                      link: "https://youtu.be/-vx6G95a1f0",
-                    },
-         {
-                      title: "মা তুমি আজ প্রস্তুতি নাও",
-                      link: "https://youtu.be/x_41jKLUOnQ?si=SNvAn8EAyNhduJLX",
-                    },
-                    { title: "যাকাত", link: "https://youtu.be/N8q3lIKL_0k" },
-                  ].map((song, index) => (
-                    <Card
-                      key={index}
-                      className="hover:shadow-md transition-shadow"
-                    >
-                      <CardContent className="flex items-center justify-between p-4">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-slate-800 text-sm sm:text-base truncate">
-                            {song.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm text-slate-600">
-                            Protest Song
-                          </p>
-                        </div>
-                        <div className="flex gap-2 flex-shrink-0">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="hover:bg-red-50"
-                          >
-                            <Play className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => window.open(song.link, "_blank")}
-                            className="text-xs hidden sm:flex"
-                          >
-                            YouTube
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-            </div>
+            )}
 
             {/* Complete Nasheed Collection */}
             <div className="space-y-6">

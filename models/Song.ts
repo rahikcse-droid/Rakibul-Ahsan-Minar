@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface ISong extends Document {
   title: string;
   artist: string;
+  singerId?: string;
   link: string;
   category: 'nasheed' | 'protest' | 'spiritual' | 'other';
   isPublished: boolean;
@@ -24,6 +25,10 @@ const SongSchema = new Schema<ISong>({
     type: String,
     required: true,
     trim: true,
+  },
+  singerId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Singer',
   },
   link: {
     type: String,
