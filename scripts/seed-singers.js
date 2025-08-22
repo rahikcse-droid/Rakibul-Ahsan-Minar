@@ -1,4 +1,3 @@
-// scripts/seed-singers.js
 const mongoose = require("mongoose");
 
 // MongoDB connection
@@ -12,6 +11,7 @@ const SingerSchema = new mongoose.Schema(
     image: { type: String, required: true },
     bio: { type: String },
     isActive: { type: Boolean, default: true },
+    order: { type: Number, required: true }, // Added order field
   },
   { timestamps: true }
 );
@@ -21,7 +21,7 @@ const SongSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     artist: { type: String, required: true },
-    singerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Singer' },
+    singerId: { type: mongoose.Schema.Types.ObjectId, ref: "Singer" },
     link: { type: String, required: true },
     category: {
       type: String,
@@ -43,30 +43,35 @@ const singersData = [
     image: "/images/singer-iqbal-hossain-jibon.jpg",
     bio: "Renowned Islamic nasheed artist known for spiritual and devotional songs",
     isActive: true,
+    order: 1, // Assigned order
   },
   {
     name: "শিল্পী মাহমুদ ফয়সাল",
     image: "/images/singer-mahmud-foysal.jpg",
     bio: "Popular nasheed singer and social activist through music",
     isActive: true,
+    order: 2, // Assigned order
   },
   {
     name: "শিল্পী মশিউর রহমান",
     image: "/images/singer-moshiur-rahman.jpg",
     bio: "Protest song artist and social consciousness advocate",
     isActive: true,
+    order: 3, // Assigned order
   },
   {
     name: "শিল্পী মাহফুজ মামুন",
     image: "/images/singer-mahfuz-mamun.jpg",
     bio: "Versatile nasheed artist with focus on spiritual and social themes",
     isActive: true,
+    order: 4, // Assigned order
   },
   {
     name: "শিল্পী মাহবুব রিয়াজ",
     image: "/images/singer-mahbub-riaz.jpg",
     bio: "Islamic nasheed singer known for motivational and spiritual songs",
     isActive: true,
+    order: 5, // Assigned order
   },
 ];
 
@@ -88,7 +93,7 @@ const songsData = [
     singerName: "শিল্পী ইকবাল হুসাইন জীবন",
   },
   {
-    title: "রাসূলের মত চাঁদ",
+    title: "রাসূcassলের মত চাঁদ",
     artist: "ইকবাল হুসাইন জীবন",
     link: "https://youtu.be/64VxgRjW4-w?si=BB15jX2VAw-Zxzjs",
     category: "nasheed",
@@ -301,7 +306,7 @@ const songsData = [
   {
     title: "আর রহমান",
     artist: "গাজী আনাস রওশন",
-    link: "https://youtu.be/yeV9vAxm-7g",
+    link: "https://youtu.be/yeV9burgovAxm-7g",
     category: "nasheed",
   },
   {
@@ -477,7 +482,7 @@ async function seedSingers() {
 
     // Create a map of singer names to IDs
     const singerMap = {};
-    insertedSingers.forEach(singer => {
+    insertedSingers.forEach((singer) => {
       singerMap[singer.name] = singer._id;
     });
 
@@ -486,12 +491,12 @@ async function seedSingers() {
       if (songData.singerName && singerMap[songData.singerName]) {
         await Song.updateOne(
           { title: songData.title, artist: songData.artist },
-          { 
-            $set: { 
+          {
+            $set: {
               singerId: singerMap[songData.singerName],
               link: songData.link,
-              category: songData.category
-            } 
+              category: songData.category,
+            },
           },
           { upsert: true }
         );
@@ -499,15 +504,15 @@ async function seedSingers() {
         // Insert songs without specific singers
         await Song.updateOne(
           { title: songData.title, artist: songData.artist },
-          { 
-            $set: { 
+          {
+            $set: {
               title: songData.title,
               artist: songData.artist,
               link: songData.link,
               category: songData.category,
               isPublished: true,
-              publishedDate: new Date()
-            } 
+              publishedDate: new Date(),
+            },
           },
           { upsert: true }
         );

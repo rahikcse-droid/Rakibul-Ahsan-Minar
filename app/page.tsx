@@ -61,6 +61,7 @@ interface Singer {
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
       <div className="container mx-auto px-4">
@@ -167,36 +168,9 @@ export default function Portfolio() {
   const [showAllNasheed, setShowAllNasheed] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
   const [songs, setSongs] = useState<Song[]>([]);
-  const [singers, setSingers] = useState<Singer[]>([
-    {
-      _id: "singer1",
-      name: "শিল্পী ইকবাল হুসাইন জীবন",
-      image: "/placeholder.svg",
-      bio: "Renowned nasheed artist and vocalist",
-    },
-    {
-      _id: "singer2",
-      name: "শিল্পী মাহমুদ ফয়সাল",
-      image: "/placeholder.svg",
-      bio: "Talented singer and nasheed performer",
-    },
-    {
-      _id: "singer3",
-      name: "শিল্পী মশিউর রহমান",
-      image: "/placeholder.svg",
-      bio: "Accomplished vocalist and spiritual singer",
-    },
-    {
-      _id: "singer4",
-      name: "শিল্পী মাহফুজ মামুন",
-      image: "/placeholder.svg",
-      bio: "Experienced nasheed artist and performer",
-    },
-  ]);
-  const [singerSongs, setSingerSongs] = useState<{ [key: string]: Song[] }>({});
-  const [showMoreSongs, setShowMoreSongs] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [singers, setSingers] = useState<Singer[]>([]);
+  const [singerSongs, setSingerSongs] = useState<{[key: string]: Song[]}>({});
+  const [showMoreSongs, setShowMoreSongs] = useState<{[key: string]: boolean}>({});
   const [isLoading, setIsLoading] = useState(true);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -212,9 +186,11 @@ export default function Portfolio() {
 
   const fetchData = async () => {
     try {
-      const [booksResponse, songsResponse, singersResponse] = await Promise.all(
-        [fetch("/api/books"), fetch("/api/songs"), fetch("/api/singers")]
-      );
+      const [booksResponse, songsResponse, singersResponse] = await Promise.all([
+        fetch("/api/books"),
+        fetch("/api/songs"),
+        fetch("/api/singers"),
+      ]);
 
       if (booksResponse.ok) {
         const booksData = await booksResponse.json();
@@ -229,13 +205,11 @@ export default function Portfolio() {
       if (singersResponse.ok) {
         const singersData = await singersResponse.json();
         setSingers(singersData);
-
+        
         // Fetch songs for each singer
-        const singerSongsData: { [key: string]: Song[] } = {};
+        const singerSongsData: {[key: string]: Song[]} = {};
         for (const singer of singersData) {
-          const singerSongsResponse = await fetch(
-            `/api/songs?singerId=${singer._id}`
-          );
+          const singerSongsResponse = await fetch(`/api/songs?singerId=${singer._id}`);
           if (singerSongsResponse.ok) {
             const singerSongsResult = await singerSongsResponse.json();
             singerSongsData[singer._id] = singerSongsResult;
@@ -249,6 +223,8 @@ export default function Portfolio() {
       setIsLoading(false);
     }
   };
+
+  console.log("All singers::", singers)
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -281,9 +257,9 @@ export default function Portfolio() {
   const displayedSongs = showAllNasheed ? songs : songs.slice(0, 9);
 
   const toggleShowMoreSongs = (singerId: string) => {
-    setShowMoreSongs((prev) => ({
+    setShowMoreSongs(prev => ({
       ...prev,
-      [singerId]: !prev[singerId],
+      [singerId]: !prev[singerId]
     }));
   };
 
@@ -515,21 +491,21 @@ export default function Portfolio() {
               <div className="space-y-12">
                 {singers.map((singer, singerIndex) => {
                   const singerSongsData = singerSongs[singer._id] || [];
-                  const displayedSingerSongs = showMoreSongs[singer._id]
-                    ? singerSongsData
+                  const displayedSingerSongs = showMoreSongs[singer._id] 
+                    ? singerSongsData 
                     : singerSongsData.slice(0, 6);
-
+                  
                   const colors = [
-                    { bg: "bg-emerald-500", hover: "hover:bg-emerald-50" },
-                    { bg: "bg-blue-500", hover: "hover:bg-blue-50" },
-                    { bg: "bg-red-500", hover: "hover:bg-red-50" },
-                    { bg: "bg-purple-500", hover: "hover:bg-purple-50" },
-                    { bg: "bg-orange-500", hover: "hover:bg-orange-50" },
+                    { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-50' },
+                    { bg: 'bg-blue-500', hover: 'hover:bg-blue-50' },
+                    { bg: 'bg-red-500', hover: 'hover:bg-red-50' },
+                    { bg: 'bg-purple-500', hover: 'hover:bg-purple-50' },
+                    { bg: 'bg-orange-500', hover: 'hover:bg-orange-50' },
                   ];
                   const colorIndex = singerIndex % colors.length;
-
+                  
                   if (singerSongsData.length === 0) return null;
-
+                  
                   return (
                     <div key={singer._id} className="space-y-6">
                       <div className="text-center mb-8">
@@ -538,16 +514,14 @@ export default function Portfolio() {
                         </h3>
                         <div className="flex items-center justify-center mb-6">
                           <Image
-                            src={singer.image || "/placeholder.svg"}
+                            src={singer.image || '/placeholder.svg'}
                             alt={singer.name}
                             width={120}
                             height={120}
                             className="rounded-full shadow-lg object-cover"
                           />
                         </div>
-                        <div
-                          className={`w-24 h-1 ${colors[colorIndex].bg} mx-auto rounded`}
-                        ></div>
+                        <div className={`w-24 h-1 ${colors[colorIndex].bg} mx-auto rounded`}></div>
                         {singer.bio && (
                           <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
                             {singer.bio}
@@ -567,22 +541,16 @@ export default function Portfolio() {
                                   {song.title}
                                 </h4>
                                 <p className="text-xs sm:text-sm text-slate-600">
-                                  {song.category === "nasheed"
-                                    ? "Islamic Nasheed"
-                                    : song.category === "protest"
-                                    ? "Protest Song"
-                                    : song.category === "spiritual"
-                                    ? "Spiritual"
-                                    : "Other"}
+                                  {song.category === 'nasheed' ? 'Islamic Nasheed' : 
+                                   song.category === 'protest' ? 'Protest Song' : 
+                                   song.category === 'spiritual' ? 'Spiritual' : 'Other'}
                                 </p>
                               </div>
                               <div className="flex gap-2 flex-shrink-0">
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  onClick={() =>
-                                    window.open(song.link, "_blank")
-                                  }
+                                  onClick={() => window.open(song.link, "_blank")}
                                   className={colors[colorIndex].hover}
                                 >
                                   <Play className="h-4 w-4" />
@@ -590,9 +558,7 @@ export default function Portfolio() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() =>
-                                    window.open(song.link, "_blank")
-                                  }
+                                  onClick={() => window.open(song.link, "_blank")}
                                   className="text-xs hidden sm:flex"
                                 >
                                   YouTube
@@ -602,7 +568,7 @@ export default function Portfolio() {
                           </Card>
                         ))}
                       </div>
-
+                      
                       {singerSongsData.length > 6 && (
                         <div className="text-center">
                           <Button
@@ -618,8 +584,7 @@ export default function Portfolio() {
                             ) : (
                               <>
                                 <ChevronDown className="mr-2 h-4 w-4" />
-                                Show More ({singerSongsData.length - 6} more
-                                songs)
+                                Show More ({singerSongsData.length - 6} more songs)
                               </>
                             )}
                           </Button>
