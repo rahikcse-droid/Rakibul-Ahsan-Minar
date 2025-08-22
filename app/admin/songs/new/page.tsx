@@ -1,20 +1,26 @@
 // app\admin\songs\new\page.tsx
 "use client";
 
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Save } from 'lucide-react';
-import Link from 'next/link';
+import { useState } from "react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowLeft, Save } from "lucide-react";
+import Link from "next/link";
 
 interface Singer {
   _id: string;
@@ -23,18 +29,18 @@ interface Singer {
 
 export default function NewSong() {
   const [formData, setFormData] = useState({
-    title: '',
-    artist: '',
-    singerId: '',
-    link: '',
-    category: 'nasheed',
+    title: "",
+    artist: "",
+    singerId: "none",
+    link: "",
+    category: "nasheed",
     isPublished: true,
-    duration: '',
-    description: '',
-    lyrics: '',
+    duration: "",
+    description: "",
+    lyrics: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [singers, setSingers] = useState<Singer[]>([]);
   const router = useRouter();
 
@@ -44,45 +50,51 @@ export default function NewSong() {
 
   const fetchSingers = async () => {
     try {
-      const response = await fetch('/api/admin/singers');
+      const response = await fetch("/api/admin/singers");
       if (response.ok) {
         const data = await response.json();
         setSingers(data.singers);
       }
     } catch (error) {
-      console.error('Error fetching singers:', error);
+      console.error("Error fetching singers:", error);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('/api/admin/songs', {
-        method: 'POST',
+      // Prepare the data for submission
+      const submitData = {
+        ...formData,
+        singerId: formData.singerId === "none" ? "" : formData.singerId,
+      };
+
+      const response = await fetch("/api/admin/songs", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create song');
+        throw new Error(data.error || "Failed to create song");
       }
 
-      router.push('/admin/songs');
+      router.push("/admin/songs");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create song');
+      setError(err instanceof Error ? err.message : "Failed to create song");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -122,7 +134,9 @@ export default function NewSong() {
                       <Input
                         id="title"
                         value={formData.title}
-                        onChange={(e) => handleInputChange('title', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("title", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -131,7 +145,9 @@ export default function NewSong() {
                       <Input
                         id="artist"
                         value={formData.artist}
-                        onChange={(e) => handleInputChange('artist', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("artist", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -141,13 +157,15 @@ export default function NewSong() {
                     <Label htmlFor="singer">Singer</Label>
                     <Select
                       value={formData.singerId}
-                      onValueChange={(value) => handleInputChange('singerId', value)}
+                      onValueChange={(value) =>
+                        handleInputChange("singerId", value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select a singer" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">No Singer</SelectItem>
+                        <SelectItem value="none">No Singer</SelectItem>
                         {singers.map((singer) => (
                           <SelectItem key={singer._id} value={singer._id}>
                             {singer.name}
@@ -163,7 +181,9 @@ export default function NewSong() {
                       <Input
                         id="link"
                         value={formData.link}
-                        onChange={(e) => handleInputChange('link', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("link", e.target.value)
+                        }
                         placeholder="https://youtu.be/..."
                         required
                       />
@@ -173,7 +193,9 @@ export default function NewSong() {
                       <Input
                         id="duration"
                         value={formData.duration}
-                        onChange={(e) => handleInputChange('duration', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("duration", e.target.value)
+                        }
                         placeholder="3:45"
                       />
                     </div>
@@ -184,7 +206,9 @@ export default function NewSong() {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("description", e.target.value)
+                      }
                       rows={3}
                     />
                   </div>
@@ -194,7 +218,9 @@ export default function NewSong() {
                     <Textarea
                       id="lyrics"
                       value={formData.lyrics}
-                      onChange={(e) => handleInputChange('lyrics', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("lyrics", e.target.value)
+                      }
                       rows={6}
                       placeholder="Enter song lyrics here..."
                     />
@@ -215,7 +241,9 @@ export default function NewSong() {
                     <Switch
                       id="published"
                       checked={formData.isPublished}
-                      onCheckedChange={(checked) => handleInputChange('isPublished', checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isPublished", checked)
+                      }
                     />
                   </div>
                 </CardContent>
@@ -228,7 +256,9 @@ export default function NewSong() {
                 <CardContent>
                   <Select
                     value={formData.category}
-                    onValueChange={(value) => handleInputChange('category', value)}
+                    onValueChange={(value) =>
+                      handleInputChange("category", value)
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue />
