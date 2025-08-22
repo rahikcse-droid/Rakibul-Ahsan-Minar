@@ -12,7 +12,6 @@ import {
   Menu,
   X,
   Settings,
-  Users,
   BarChart3,
 } from "lucide-react";
 
@@ -333,82 +332,5 @@ function SidebarContent({
         </div>
       </div>
     </div>
-  );
-}
-
-// Example usage components for different pages:
-
-// Dashboard Page Component
-export function DashboardPage() {
-  return (
-    <AdminLayout
-      title="Dashboard"
-      description="Welcome to your portfolio management system"
-    >
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-        suppressHydrationWarning={true}
-      >
-        {/* Your dashboard content */}
-        <div
-          className="bg-white rounded-lg shadow p-6"
-          suppressHydrationWarning={true}
-        >
-          <h3 className="text-lg font-semibold">Dashboard Content</h3>
-          <p className="text-gray-600">Your dashboard content goes here...</p>
-        </div>
-      </div>
-    </AdminLayout>
-  );
-}
-
-// Books Page Component
-export function BooksPage() {
-  return (
-    <AdminLayout title="Books" description="Manage your book collection">
-      <div
-        className="bg-white rounded-lg shadow"
-        suppressHydrationWarning={true}
-      >
-        <div className="p-6" suppressHydrationWarning={true}>
-          <h3 className="text-lg font-semibold mb-4">Books Management</h3>
-          <p className="text-gray-600">Your books content goes here...</p>
-        </div>
-      </div>
-    </AdminLayout>
-  );
-}
-
-// Songs Page Component
-export function SongsPage() {
-  return (
-    <AdminLayout title="Songs" description="Manage your music collection">
-      <div
-        className="bg-white rounded-lg shadow"
-        suppressHydrationWarning={true}
-      >
-        <div className="p-6" suppressHydrationWarning={true}>
-          <h3 className="text-lg font-semibold mb-4">Songs Management</h3>
-          <p className="text-gray-600">Your songs content goes here...</p>
-        </div>
-      </div>
-    </AdminLayout>
-  );
-}
-
-// Messages Page Component
-export function MessagesPage() {
-  return (
-    <AdminLayout title="Messages" description="Manage contact messages">
-      <div
-        className="bg-white rounded-lg shadow"
-        suppressHydrationWarning={true}
-      >
-        <div className="p-6" suppressHydrationWarning={true}>
-          <h3 className="text-lg font-semibold mb-4">Messages Management</h3>
-          <p className="text-gray-600">Your messages content goes here...</p>
-        </div>
-      </div>
-    </AdminLayout>
   );
 }
