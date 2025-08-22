@@ -1,59 +1,60 @@
 "use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import AdminLayout from '@/components/admin/AdminLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, Save } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import AdminLayout from "@/components/admin/AdminLayout";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ArrowLeft, Save } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function NewSinger() {
   const [formData, setFormData] = useState({
-    name: '',
-    image: '',
-    bio: '',
+    name: "",
+    image: "",
+    bio: "",
     isActive: true,
+    order: 0, // Added order field
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const response = await fetch('/api/admin/singers', {
-        method: 'POST',
+      const response = await fetch("/api/admin/singers", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to create singer');
+        throw new Error(data.error || "Failed to create singer");
       }
 
-      router.push('/admin/singers');
+      router.push("/admin/singers");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create singer');
+      setError(err instanceof Error ? err.message : "Failed to create singer");
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -67,7 +68,9 @@ export default function NewSinger() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">Add New Singer</h1>
+            <h1 className="text-3xl font-bold text-slate-800">
+              Add New Singer
+            </h1>
             <p className="text-slate-600 mt-2">Create a new singer profile</p>
           </div>
         </div>
@@ -92,7 +95,9 @@ export default function NewSinger() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -102,7 +107,9 @@ export default function NewSinger() {
                     <Input
                       id="image"
                       value={formData.image}
-                      onChange={(e) => handleInputChange('image', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("image", e.target.value)
+                      }
                       placeholder="https://example.com/singer-image.jpg"
                       required
                     />
@@ -113,9 +120,23 @@ export default function NewSinger() {
                     <Textarea
                       id="bio"
                       value={formData.bio}
-                      onChange={(e) => handleInputChange('bio', e.target.value)}
+                      onChange={(e) => handleInputChange("bio", e.target.value)}
                       rows={4}
                       placeholder="Brief biography of the singer..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="order">Order *</Label>
+                    <Input
+                      id="order"
+                      type="number"
+                      value={formData.order}
+                      onChange={(e) =>
+                        handleInputChange("order", parseInt(e.target.value))
+                      }
+                      placeholder="Enter display order (e.g., 1, 2, 3...)"
+                      required
                     />
                   </div>
                 </CardContent>
@@ -134,7 +155,9 @@ export default function NewSinger() {
                     <Switch
                       id="active"
                       checked={formData.isActive}
-                      onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("isActive", checked)
+                      }
                     />
                   </div>
                 </CardContent>
@@ -157,10 +180,10 @@ export default function NewSinger() {
                   )}
                   <div className="text-center">
                     <p className="font-semibold text-slate-800">
-                      {formData.name || 'Singer Name'}
+                      {formData.name || "Singer Name"}
                     </p>
                     <p className="text-sm text-slate-600 mt-1">
-                      {formData.bio || 'No biography provided'}
+                      {formData.bio || "No biography provided"}
                     </p>
                   </div>
                 </CardContent>
