@@ -947,7 +947,7 @@ export default function Portfolio() {
           <div className="border-t border-slate-700 mt-8 pt-8 text-center text-slate-400">
             <p className="text-xs sm:text-sm">
               &copy; {new Date().getFullYear()} Rakibul Ahsan Minar. All rights
-              reserved.
+              reserved. Developed by Rafikul Ahsan Rahik.
             </p>
           </div>
         </div>
