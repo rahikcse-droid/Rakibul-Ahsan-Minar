@@ -350,9 +350,9 @@ export default function Portfolio() {
                 </p>
                 <p>
                   With a heart rooted in spirituality and a voice raised against
-                  injustice, I've written over{" "}
+                  injustice, I've written nany{" "}
                   <strong className="text-amber-600">
-                    100 original songs and nasheed
+                    original songs and nasheed
                   </strong>
                   , and authored several published books now available online.
                 </p>
@@ -714,7 +714,7 @@ export default function Portfolio() {
                         Master's in Political Science
                       </h3>
                       <p className="text-slate-600 text-sm sm:text-base">
-                        Feni Government College (Incomplete)
+                        National University (Incomplete)
                       </p>
                       <p className="text-xs sm:text-sm text-slate-500 mt-2">
                         Advanced studies in political theory and governance
@@ -886,7 +886,7 @@ export default function Portfolio() {
                 Rakibul Ahsan Minar
               </h3>
               <p className="text-slate-300 text-sm sm:text-base">
-                Writer • Poet • Nasheed Artist
+                Writer • Poet • Lyricist
               </p>
             </div>
 
