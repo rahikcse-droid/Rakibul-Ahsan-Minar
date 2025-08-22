@@ -646,6 +646,10 @@ export default function Portfolio() {
                       title: "মানবতার  ডাক্তার",
                       link: "https://youtu.be/-vx6G95a1f0",
                     },
+         {
+                      title: "মা তুমি আজ প্রস্তুতি নাও",
+                      link: "https://youtu.be/x_41jKLUOnQ?si=SNvAn8EAyNhduJLX",
+                    },
                     { title: "যাকাত", link: "https://youtu.be/N8q3lIKL_0k" },
                   ].map((song, index) => (
                     <Card
