@@ -638,7 +638,7 @@ export default function Portfolio() {
               <div className="space-y-6">
                 <div className="text-center mb-8">
                   <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                    Complete Nasheed Collection
+                    Nasheed Collection
                   </h3>
                   <div className="w-24 h-1 bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 mx-auto rounded"></div>
                   <p className="text-slate-600 mt-2">
