@@ -61,7 +61,6 @@ interface Singer {
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200">
       <div className="container mx-auto px-4">
@@ -169,8 +168,10 @@ export default function Portfolio() {
   const [books, setBooks] = useState<Book[]>([]);
   const [songs, setSongs] = useState<Song[]>([]);
   const [singers, setSingers] = useState<Singer[]>([]);
-  const [singerSongs, setSingerSongs] = useState<{[key: string]: Song[]}>({});
-  const [showMoreSongs, setShowMoreSongs] = useState<{[key: string]: boolean}>({});
+  const [singerSongs, setSingerSongs] = useState<{ [key: string]: Song[] }>({});
+  const [showMoreSongs, setShowMoreSongs] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [isLoading, setIsLoading] = useState(true);
   const [contactForm, setContactForm] = useState({
     name: "",
@@ -186,45 +187,56 @@ export default function Portfolio() {
 
   const fetchData = async () => {
     try {
-      const [booksResponse, songsResponse, singersResponse] = await Promise.all([
-        fetch("/api/books"),
-        fetch("/api/songs"),
-        fetch("/api/singers"),
+      // Fetch all data in parallel for faster loading
+      const [booksResponse, songsResponse, singersResponse] = await Promise.all(
+        [
+          fetch("/api/books"),
+          fetch("/api/songs"), // This will get ALL songs at once
+          fetch("/api/singers"),
+        ]
+      );
+
+      const results = await Promise.all([
+        booksResponse.ok ? booksResponse.json() : [],
+        songsResponse.ok ? songsResponse.json() : [],
+        singersResponse.ok ? singersResponse.json() : [],
       ]);
 
-      if (booksResponse.ok) {
-        const booksData = await booksResponse.json();
-        setBooks(booksData);
-      }
+      const [booksData, allSongsData, singersData] = results;
 
-      if (songsResponse.ok) {
-        const songsData = await songsResponse.json();
-        setSongs(songsData);
-      }
+      // Set the data
+      setBooks(booksData);
+      setSongs(allSongsData);
+      setSingers(singersData);
 
-      if (singersResponse.ok) {
-        const singersData = await singersResponse.json();
-        setSingers(singersData);
-        
-        // Fetch songs for each singer
-        const singerSongsData: {[key: string]: Song[]} = {};
-        for (const singer of singersData) {
-          const singerSongsResponse = await fetch(`/api/songs?singerId=${singer._id}`);
-          if (singerSongsResponse.ok) {
-            const singerSongsResult = await singerSongsResponse.json();
-            singerSongsData[singer._id] = singerSongsResult;
+      // Group songs by singer ID for faster access
+      if (allSongsData && allSongsData.length > 0) {
+        const groupedSongs: { [key: string]: Song[] } = {};
+
+        // Group all songs by singerId
+        allSongsData.forEach((song: Song) => {
+          if (song.singerId?._id) {
+            const singerId = song.singerId._id;
+            if (!groupedSongs[singerId]) {
+              groupedSongs[singerId] = [];
+            }
+            groupedSongs[singerId].push(song);
           }
-        }
-        setSingerSongs(singerSongsData);
+        });
+
+        setSingerSongs(groupedSongs);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      // Set empty arrays to prevent UI issues
+      setBooks([]);
+      setSongs([]);
+      setSingers([]);
+      setSingerSongs({});
     } finally {
       setIsLoading(false);
     }
   };
-
-  console.log("All singers::", singers)
 
   const handleContactSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,11 +269,23 @@ export default function Portfolio() {
   const displayedSongs = showAllNasheed ? songs : songs.slice(0, 9);
 
   const toggleShowMoreSongs = (singerId: string) => {
-    setShowMoreSongs(prev => ({
+    setShowMoreSongs((prev) => ({
       ...prev,
-      [singerId]: !prev[singerId]
+      [singerId]: !prev[singerId],
     }));
   };
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-red-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800 mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-red-100">
@@ -399,7 +423,7 @@ export default function Portfolio() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-8 max-w-5xl mx-auto">
             {displayedBooks.map((book, index) => (
               <Card
-                key={index}
+                key={book._id}
                 className={`hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 ${book.shadow} border-0 bg-white/80 backdrop-blur-sm h-full`}
               >
                 <CardHeader className="text-center pb-4">
@@ -451,25 +475,27 @@ export default function Portfolio() {
             ))}
           </div>
 
-          <div className="text-center space-y-4">
-            <Button
-              onClick={() => setShowAllBooks(!showAllBooks)}
-              size="lg"
-              className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
-            >
-              {showAllBooks ? (
-                <>
-                  <ChevronUp className="mr-2 h-4 w-4" />
-                  Show Less
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="mr-2 h-4 w-4" />
-                  See More Books ({books.length - 3} more)
-                </>
-              )}
-            </Button>
-          </div>
+          {books.length > 3 && (
+            <div className="text-center space-y-4">
+              <Button
+                onClick={() => setShowAllBooks(!showAllBooks)}
+                size="lg"
+                className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
+              >
+                {showAllBooks ? (
+                  <>
+                    <ChevronUp className="mr-2 h-4 w-4" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="mr-2 h-4 w-4" />
+                    See More Books ({books.length - 3} more)
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -491,21 +517,21 @@ export default function Portfolio() {
               <div className="space-y-12">
                 {singers.map((singer, singerIndex) => {
                   const singerSongsData = singerSongs[singer._id] || [];
-                  const displayedSingerSongs = showMoreSongs[singer._id] 
-                    ? singerSongsData 
+                  const displayedSingerSongs = showMoreSongs[singer._id]
+                    ? singerSongsData
                     : singerSongsData.slice(0, 6);
-                  
+
                   const colors = [
-                    { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-50' },
-                    { bg: 'bg-blue-500', hover: 'hover:bg-blue-50' },
-                    { bg: 'bg-red-500', hover: 'hover:bg-red-50' },
-                    { bg: 'bg-purple-500', hover: 'hover:bg-purple-50' },
-                    { bg: 'bg-orange-500', hover: 'hover:bg-orange-50' },
+                    { bg: "bg-emerald-500", hover: "hover:bg-emerald-50" },
+                    { bg: "bg-blue-500", hover: "hover:bg-blue-50" },
+                    { bg: "bg-red-500", hover: "hover:bg-red-50" },
+                    { bg: "bg-purple-500", hover: "hover:bg-purple-50" },
+                    { bg: "bg-orange-500", hover: "hover:bg-orange-50" },
                   ];
                   const colorIndex = singerIndex % colors.length;
-                  
+
                   if (singerSongsData.length === 0) return null;
-                  
+
                   return (
                     <div key={singer._id} className="space-y-6">
                       <div className="text-center mb-8">
@@ -514,14 +540,16 @@ export default function Portfolio() {
                         </h3>
                         <div className="flex items-center justify-center mb-6">
                           <Image
-                            src={singer.image || '/placeholder.svg'}
+                            src={singer.image || "/placeholder.svg"}
                             alt={singer.name}
                             width={120}
                             height={120}
                             className="rounded-full shadow-lg object-cover"
                           />
                         </div>
-                        <div className={`w-24 h-1 ${colors[colorIndex].bg} mx-auto rounded`}></div>
+                        <div
+                          className={`w-24 h-1 ${colors[colorIndex].bg} mx-auto rounded`}
+                        ></div>
                         {singer.bio && (
                           <p className="text-slate-600 mt-4 max-w-2xl mx-auto">
                             {singer.bio}
@@ -532,7 +560,7 @@ export default function Portfolio() {
                       <div className="grid sm:grid-cols-2 gap-4">
                         {displayedSingerSongs.map((song, index) => (
                           <Card
-                            key={index}
+                            key={song._id}
                             className="hover:shadow-md transition-shadow"
                           >
                             <CardContent className="flex items-center justify-between p-4">
@@ -541,16 +569,22 @@ export default function Portfolio() {
                                   {song.title}
                                 </h4>
                                 <p className="text-xs sm:text-sm text-slate-600">
-                                  {song.category === 'nasheed' ? 'Islamic Nasheed' : 
-                                   song.category === 'protest' ? 'Protest Song' : 
-                                   song.category === 'spiritual' ? 'Spiritual' : 'Other'}
+                                  {song.category === "nasheed"
+                                    ? "Islamic Nasheed"
+                                    : song.category === "protest"
+                                    ? "Protest Song"
+                                    : song.category === "spiritual"
+                                    ? "Spiritual"
+                                    : "Other"}
                                 </p>
                               </div>
                               <div className="flex gap-2 flex-shrink-0">
                                 <Button
                                   size="sm"
                                   variant="ghost"
-                                  onClick={() => window.open(song.link, "_blank")}
+                                  onClick={() =>
+                                    window.open(song.link, "_blank")
+                                  }
                                   className={colors[colorIndex].hover}
                                 >
                                   <Play className="h-4 w-4" />
@@ -558,7 +592,9 @@ export default function Portfolio() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => window.open(song.link, "_blank")}
+                                  onClick={() =>
+                                    window.open(song.link, "_blank")
+                                  }
                                   className="text-xs hidden sm:flex"
                                 >
                                   YouTube
@@ -568,7 +604,7 @@ export default function Portfolio() {
                           </Card>
                         ))}
                       </div>
-                      
+
                       {singerSongsData.length > 6 && (
                         <div className="text-center">
                           <Button
@@ -584,7 +620,8 @@ export default function Portfolio() {
                             ) : (
                               <>
                                 <ChevronDown className="mr-2 h-4 w-4" />
-                                Show More ({singerSongsData.length - 6} more songs)
+                                Show More ({singerSongsData.length - 6} more
+                                songs)
                               </>
                             )}
                           </Button>
@@ -597,73 +634,73 @@ export default function Portfolio() {
             )}
 
             {/* Complete Nasheed Collection */}
-            <div className="space-y-6">
-              <div className="text-center mb-8">
-                <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
-                  Complete Nasheed Collection
-                </h3>
-                <div className="w-24 h-1 bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 mx-auto rounded"></div>
-                <p className="text-slate-600 mt-2">
-                  {songs?.length} Songs - Various Artists
-                </p>
-              </div>
+            {songs.length > 0 && (
+              <div className="space-y-6">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+                    Complete Nasheed Collection
+                  </h3>
+                  <div className="w-24 h-1 bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 mx-auto rounded"></div>
+                  <p className="text-slate-600 mt-2">
+                    {songs.length} Songs - Various Artists
+                  </p>
+                </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                {displayedSongs.map((song, index) => (
-                  <Card
-                    key={index}
-                    className="hover:shadow-md transition-shadow"
-                  >
-                    <CardContent className="p-3 sm:p-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1 min-w-0 pr-2">
-                          <h4 className="font-semibold text-slate-800 text-sm truncate">
-                            {song.title}
-                          </h4>
-                          <p className="text-xs text-slate-600 truncate">
-                            {song.artist}
-                          </p>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                  {displayedSongs.map((song, index) => (
+                    <Card
+                      key={song._id}
+                      className="hover:shadow-md transition-shadow"
+                    >
+                      <CardContent className="p-3 sm:p-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0 pr-2">
+                            <h4 className="font-semibold text-slate-800 text-sm truncate">
+                              {song.title}
+                            </h4>
+                            <p className="text-xs text-slate-600 truncate">
+                              {song.artist}
+                            </p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => window.open(song.link, "_blank")}
+                            className="flex-shrink-0 hover:bg-purple-50"
+                          >
+                            <Play className="h-3 w-3" />
+                          </Button>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => window.open(song.link, "_blank")}
-                          className="flex-shrink-0 hover:bg-purple-50"
-                        >
-                          <Play className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {songs.length > 9 && (
+                  <div className="text-center">
+                    {!showAllNasheed ? (
+                      <Button
+                        onClick={() => setShowAllNasheed(true)}
+                        size="lg"
+                        className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
+                      >
+                        <ChevronDown className="mr-2 h-4 w-4" />
+                        See More Songs ({songs.length - 9} more)
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => setShowAllNasheed(false)}
+                        variant="outline"
+                        className="bg-white/80 backdrop-blur-sm border-slate-300 text-slate-700 hover:bg-slate-100"
+                      >
+                        <ChevronUp className="mr-2 h-4 w-4" />
+                        Show Less
+                      </Button>
+                    )}
+                  </div>
+                )}
               </div>
-
-              {!showAllNasheed && (
-                <div className="text-center">
-                  <Button
-                    onClick={() => setShowAllNasheed(true)}
-                    size="lg"
-                    className="bg-gradient-to-r from-pink-500 via-yellow-500 to-red-500 hover:from-pink-600 hover:via-yellow-600 hover:to-red-600 text-white shadow-lg"
-                  >
-                    <ChevronDown className="mr-2 h-4 w-4" />
-                    See More Songs ({songs.length - 9} more)
-                  </Button>
-                </div>
-              )}
-
-              {showAllNasheed && (
-                <div className="text-center">
-                  <Button
-                    onClick={() => setShowAllNasheed(false)}
-                    variant="outline"
-                    className="bg-white/80 backdrop-blur-sm border-slate-300 text-slate-700 hover:bg-slate-100"
-                  >
-                    <ChevronUp className="mr-2 h-4 w-4" />
-                    Show Less
-                  </Button>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       </section>
