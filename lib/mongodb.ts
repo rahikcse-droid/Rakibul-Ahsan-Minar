@@ -24,12 +24,17 @@ if (!cached) {
 
 async function connectDB() {
   if (cached!.conn) {
+    console.log('Using existing MongoDB connection');
     return cached!.conn;
   }
 
   if (!cached!.promise) {
+    console.log('Creating new MongoDB connection...');
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
     };
 
     cached!.promise = mongoose.connect(MONGODB_URI, opts);
@@ -37,7 +42,9 @@ async function connectDB() {
 
   try {
     cached!.conn = await cached!.promise;
+    console.log('MongoDB connected successfully');
   } catch (e) {
+    console.error('MongoDB connection failed:', e);
     cached!.promise = null;
     throw e;
   }

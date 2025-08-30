@@ -5,7 +5,9 @@ import Singer from '@/models/Singer';
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('Songs API called');
     await connectDB();
+    console.log('Database connected');
     
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '0');
@@ -22,6 +24,8 @@ export async function GET(request: NextRequest) {
       query.singerId = singerId;
     }
     
+    console.log('Query:', query);
+    
     let songQuery = Song.find(query).populate('singerId', 'name image').sort({ publishedDate: -1 });
     
     if (limit > 0) {
@@ -29,12 +33,19 @@ export async function GET(request: NextRequest) {
     }
     
     const songs = await songQuery;
+    console.log(`Found ${songs.length} songs`);
 
-    return NextResponse.json(songs);
+    return NextResponse.json(songs, {
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     console.error('Get public songs error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to fetch songs', details: error.message },
       { status: 500 }
     );
   }

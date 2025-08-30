@@ -23,6 +23,8 @@ import {
   Menu,
   ChevronDown,
   ChevronUp,
+  Music,
+  RefreshCw,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -173,6 +175,7 @@ export default function Portfolio() {
     [key: string]: boolean;
   }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [dataError, setDataError] = useState<string>('');
   const [contactForm, setContactForm] = useState({
     name: "",
     email: "",
@@ -186,49 +189,50 @@ export default function Portfolio() {
   }, []);
 
   const fetchData = async () => {
+    setIsLoading(true);
+    setDataError('');
+    
     try {
-      // Fetch all data in parallel for faster loading
-      const [booksResponse, songsResponse, singersResponse] = await Promise.all(
-        [
-          fetch("/api/books"),
-          fetch("/api/songs"), // This will get ALL songs at once
-          fetch("/api/singers"),
-        ]
-      );
-
-      const results = await Promise.all([
-        booksResponse.ok ? booksResponse.json() : [],
-        songsResponse.ok ? songsResponse.json() : [],
-        singersResponse.ok ? singersResponse.json() : [],
-      ]);
-
-      const [booksData, allSongsData, singersData] = results;
-
-      // Set the data
-      setBooks(booksData);
-      setSongs(allSongsData);
-      setSingers(singersData);
-
-      // Group songs by singer ID for faster access
-      if (allSongsData && allSongsData.length > 0) {
-        const groupedSongs: { [key: string]: Song[] } = {};
-
-        // Group all songs by singerId
-        allSongsData.forEach((song: Song) => {
-          if (song.singerId?._id) {
-            const singerId = song.singerId._id;
-            if (!groupedSongs[singerId]) {
-              groupedSongs[singerId] = [];
-            }
-            groupedSongs[singerId].push(song);
+      // Fetch data sequentially to avoid race conditions
+      console.log('Fetching books...');
+      const booksResponse = await fetch("/api/books");
+      const booksData = booksResponse.ok ? await booksResponse.json() : [];
+      setBooks(Array.isArray(booksData) ? booksData : []);
+      
+      console.log('Fetching singers...');
+      const singersResponse = await fetch("/api/singers");
+      const singersData = singersResponse.ok ? await singersResponse.json() : [];
+      setSingers(Array.isArray(singersData) ? singersData : []);
+      
+      console.log('Fetching songs...');
+      const songsResponse = await fetch("/api/songs");
+      const songsData = songsResponse.ok ? await songsResponse.json() : [];
+      
+      // Ensure we have an array of songs
+      const allSongs = Array.isArray(songsData) ? songsData : [];
+      setSongs(allSongs);
+      
+      console.log(`Loaded ${allSongs.length} songs`);
+      
+      // Group songs by singer ID
+      const groupedSongs: { [key: string]: Song[] } = {};
+      allSongs.forEach((song: Song) => {
+        if (song.singerId?._id) {
+          const singerId = song.singerId._id;
+          if (!groupedSongs[singerId]) {
+            groupedSongs[singerId] = [];
           }
-        });
-
-        setSingerSongs(groupedSongs);
-      }
+          groupedSongs[singerId].push(song);
+        }
+      });
+      
+      setSingerSongs(groupedSongs);
+      console.log('Songs grouped by singers:', Object.keys(groupedSongs).length);
+      
     } catch (error) {
       console.error("Error fetching data:", error);
-      // Set empty arrays to prevent UI issues
+      setDataError('Failed to load data. Please refresh the page.');
+      // Set empty arrays as fallback
       setBooks([]);
       setSongs([]);
       setSingers([]);
@@ -281,7 +285,10 @@ export default function Portfolio() {
       <div className="min-h-screen bg-gradient-to-br from-pink-100 via-yellow-50 to-red-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-800 mx-auto mb-4"></div>
-          <p className="text-slate-600">Loading...</p>
+          <p className="text-slate-600">Loading portfolio data...</p>
+          {dataError && (
+            <p className="text-red-600 mt-2 text-sm">{dataError}</p>
+          )}
         </div>
       </div>
     );
@@ -530,7 +537,8 @@ export default function Portfolio() {
                   ];
                   const colorIndex = singerIndex % colors.length;
 
-                  if (singerSongsData.length === 0) return null;
+                  // Only show singers who have songs
+                  if (!singerSongsData || singerSongsData.length === 0) return null;
 
                   return (
                     <div key={singer._id} className="space-y-6">
@@ -634,7 +642,7 @@ export default function Portfolio() {
             )}
 
             {/* Complete Nasheed Collection */}
-            {songs.length > 0 && (
+            {songs && songs.length > 0 && (
               <div className="space-y-6">
                 <div className="text-center mb-8">
                   <h3 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
@@ -699,6 +707,29 @@ export default function Portfolio() {
                     )}
                   </div>
                 )}
+              </div>
+            )}
+            
+            {/* Show message if no songs are loaded */}
+            {!isLoading && (!songs || songs.length === 0) && (
+              <div className="text-center py-12">
+                <div className="text-slate-400 mb-4">
+                  <Music className="h-16 w-16 mx-auto mb-4" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-600 mb-2">
+                  No Songs Available
+                </h3>
+                <p className="text-slate-500 mb-4">
+                  Songs are being updated. Please check back later.
+                </p>
+                <Button 
+                  onClick={fetchData}
+                  variant="outline"
+                  className="bg-white/80 backdrop-blur-sm"
+                >
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Refresh
+                </Button>
               </div>
             )}
           </div>
