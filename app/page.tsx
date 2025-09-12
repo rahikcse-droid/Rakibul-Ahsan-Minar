@@ -782,7 +782,7 @@ export default function Portfolio() {
                         Master's in Political Science
                       </h3>
                       <p className="text-slate-600 text-sm sm:text-base">
-                        Feni National University (Incomplete)
+                        National University (Incomplete)
                       </p>
                       <p className="text-xs sm:text-sm text-slate-500 mt-2">
                         Advanced studies in political theory and governance
