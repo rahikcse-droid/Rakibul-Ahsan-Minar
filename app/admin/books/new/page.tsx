@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Save } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function NewBook() {
   const [formData, setFormData] = useState({
