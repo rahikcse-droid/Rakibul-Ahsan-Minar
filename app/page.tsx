@@ -59,7 +59,7 @@ interface Singer {
   bio?: string;
 }
 
-// Navigation Component
+// Navigation Componentt
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
